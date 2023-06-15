@@ -26,5 +26,20 @@ namespace CategoryStaj.API.Controllres
         {
             return _categoryService.GetCategoryById(id);
         }
+        [HttpPost]
+        public Category.Entities.Category Post([FromBody] Category.Entities.Category category)
+        {
+            return _categoryService.CreateCategory(category);
+        }
+        [HttpPut]
+        public Category.Entities.Category Put([FromBody] Category.Entities.Category category)
+        {
+            return _categoryService.UpdateCategory(category);
+        }
+        [HttpDelete("{id}")]
+        public void Delete(int id) 
+        {
+            _categoryService.DeleteCategory(id);
+        }
     }
 }
