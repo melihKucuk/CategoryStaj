@@ -14,35 +14,42 @@ namespace CategoryStaj.Business.Concrete
 
     public class ProductManager : IProductService
     {
-        private ICategoryRepository _productRepository;
-        public ProductManager()
+        private IProductRepository _productRepository;
+
+        public ProductManager(ICategoryRepository productRepository)
         {
-            _productRepository = new CategoryRepository();
+            _productRepository = (IProductRepository?)productRepository;
         }
 
         public Product CreateProduct(Product product)
         {
-            throw new NotImplementedException();
+            
+            return _productRepository.CreateProduct(product);
         }
 
         public void DeleteProduct(int id)
         {
-            throw new NotImplementedException();
+            
+            _productRepository.DeleteProduct(id);
         }
 
         public List<Product> GetAllProducts()
         {
-            throw new NotImplementedException();
+            
+            return _productRepository.GetAllProducts();
         }
 
         public Product GetProductById(int id)
         {
-            throw new NotImplementedException();
+           
+            return _productRepository.GetProductById(id);
         }
 
         public Product UpdateProduct(Product product)
         {
-            throw new NotImplementedException();
+            
+            return _productRepository.UpdateProduct(product);
         }
     }
+
 }
