@@ -18,10 +18,10 @@ namespace Category.Entities
 
         public decimal Price { get; set; }
 
-        // Ürünün hangi kategoriye ait olduğunu belirtmek için 
+        
         public int CategoryId { get; set; }
 
-        // Kategori ile Ürün arasındaki ilişkiyi temsil eden Kategori nesnesini ekleyebilirsiniz.
+       
         public Category Category { get; set; }
     }
 

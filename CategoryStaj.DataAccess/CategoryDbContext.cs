@@ -16,10 +16,18 @@ namespace CategoryStaj.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=DESKTOP-NC4RCNO\\SQLEXPRESS;Database=CategoryDb;Trusted_Connection=True;TrustServerCertificate=true;");
+            optionsBuilder.UseSqlServer("Server=DESKTOP-NC4RCNO\\SQLEXPRESS; Database=CategoryDb; Trusted_Connection=True; TrustServerCertificate=true;");
         }
 
         public DbSet<Category.Entities.Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId);
+        }
     }
 }

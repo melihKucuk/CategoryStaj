@@ -10,10 +10,13 @@ namespace Category.Entities
 {
     public class Category
     {
-        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [StringLength(50)]
         public string Name { get; set; }
+
+       
+        public List<Product> Products { get; set; }
     }
 }

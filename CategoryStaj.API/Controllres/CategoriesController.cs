@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CategoryStaj.API.Controllres
 {
-    [Route("api/[controller]")]
+    [Route("api/[categories]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {

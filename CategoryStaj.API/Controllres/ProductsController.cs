@@ -7,7 +7,7 @@ using Stripe;
 
 namespace CategoryStaj.API.Controllres
 {
-    [Route("api/[controller]")]
+    [Route("api/[product]")]
     [ApiController]
     public class ProductController : ControllerBase
     {
