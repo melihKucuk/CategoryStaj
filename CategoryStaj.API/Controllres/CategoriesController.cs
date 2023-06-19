@@ -14,7 +14,7 @@ namespace CategoryStaj.API.Controllres
 
         public CategoriesController()
         {
-            _categoryService=new CategoryManager();
+            _categoryService=new ProductManager();
         }
         [HttpGet]
         public List<Category.Entities.Category> Get()

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Stripe.net" Version="41.20.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Category.Entities\Category.Entities.csproj" />
     <ProjectReference Include="..\CategoryStaj.Business\CategoryStaj.Business.csproj" />
   </ItemGroup>

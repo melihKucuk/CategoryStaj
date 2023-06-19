@@ -11,10 +11,10 @@ namespace CategoryStaj.Business.Concrete
 {
     
 
-    public class CategoryManager : ICategoryService
+    public class ProductManager : ICategoryService
     {
         private ICategoryRepository _categoryRepository;
-        public CategoryManager()
+        public ProductManager()
         {
             _categoryRepository = new CategoryRepository();
         }
