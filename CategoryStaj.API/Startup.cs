@@ -3,6 +3,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using CategoryStaj.Business.Abstract;
+using CategoryStaj.Business.Concrete;
+using CategoryStaj.DataAccess;
+using CategoryStaj.DataAccess.Concrete;
+using CategoryStaj.DataAccess.Abstract;
+using Microsoft.EntityFrameworkCore;
+using CategoryStaj.Business.Abstract;
+using CategoryStaj.Business.Concrete;
+
 
 namespace CategoryStaj.API
 {
@@ -17,10 +26,13 @@ namespace CategoryStaj.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            
+            services.AddScoped<ICategoryService, CategoryManager>();
 
-            // Örneğin, CategoryService'i eklemek için:
-            // services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddDbContext<CategoryDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
         }

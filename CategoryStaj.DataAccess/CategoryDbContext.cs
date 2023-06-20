@@ -1,26 +1,24 @@
-﻿
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Category.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unipluss.Sign.ExternalContract.Entities;
 
 namespace CategoryStaj.DataAccess
 {
     public class CategoryDbContext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public CategoryDbContext(DbContextOptions<CategoryDbContext> options) : base(options)
         {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=DESKTOP-NC4RCNO\\SQLEXPRESS; Database=CategoryDb; Trusted_Connection=True; TrustServerCertificate=true;");
         }
 
         public DbSet<Category.Entities.Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=DESKTOP-NC4RCNO\\SQLEXPRESS; Database=CategoryDb; Trusted_Connection=True; TrustServerCertificate=true;");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

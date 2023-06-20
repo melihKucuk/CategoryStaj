@@ -18,29 +18,29 @@ namespace CategoryStaj.Business.Concrete
             _productRepository = productRepository;
         }
 
-        public Product CreateProduct(Product product)
+        public async Task<Product> CreateProductAsync(Product product)
         {
-            return _productRepository.CreateProduct(product);
+            return await _productRepository.CreateAsync(product);
         }
 
-        public void DeleteProduct(int id)
+        public async Task DeleteProductAsync(int id)
         {
-            _productRepository.DeleteProduct(id);
+            await _productRepository.DeleteAsync(id);
         }
 
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
-            return _productRepository.GetAllProducts();
+            return await _productRepository.GetAllAsync();
         }
 
-        public Product GetProductById(int id)
+        public async Task<Product> GetProductByIdAsync(int id)
         {
-            return _productRepository.GetProductById(id);
+            return await _productRepository.GetByIdAsync(id);
         }
 
-        public Product UpdateProduct(Product product)
+        public async Task<Product> UpdateProductAsync(Product product)
         {
-            return _productRepository.UpdateProduct(product);
+            return await _productRepository.UpdateAsync(product);
         }
     }
 }

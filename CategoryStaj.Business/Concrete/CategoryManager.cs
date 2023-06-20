@@ -1,23 +1,20 @@
 ﻿using CategoryStaj.Business.Abstract;
 using CategoryStaj.DataAccess.Abstract;
-using CategoryStaj.DataAccess.Concrete;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Category.Entities;
 
 namespace CategoryStaj.Business.Concrete
 {
-    
-
-    public class ProductManager : ICategoryService
+    public class CategoryManager : ICategoryService
     {
-        private ICategoryRepository _categoryRepository;
-        public ProductManager()
+        private readonly ICategoryRepository _categoryRepository;
+
+        public CategoryManager(ICategoryRepository categoryRepository)
         {
-            _categoryRepository = new CategoryRepository();
+            _categoryRepository = categoryRepository;
         }
+
         public Category.Entities.Category CreateCategory(Category.Entities.Category category)
         {
             return _categoryRepository.CreateCategory(category);
@@ -28,7 +25,6 @@ namespace CategoryStaj.Business.Concrete
             _categoryRepository.DeleteCategory(id);
         }
 
-
         public List<Category.Entities.Category> GetAllCategories()
         {
             return _categoryRepository.GetAllCategories();
@@ -36,11 +32,11 @@ namespace CategoryStaj.Business.Concrete
 
         public Category.Entities.Category GetCategoryById(int id)
         {
-            if (id>0)
+            if (id > 0)
             {
                 return _categoryRepository.GetCategoryById(id);
             }
-            throw new Exception("id 1 den kucuk olamaz");
+            throw new Exception("id 1'den küçük olamaz");
         }
 
         public Category.Entities.Category UpdateCategory(Category.Entities.Category category)

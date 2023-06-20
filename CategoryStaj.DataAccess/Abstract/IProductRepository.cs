@@ -1,19 +1,15 @@
-﻿using System;
+﻿using Category.Entities;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CategoryStaj.DataAccess.Abstract
 {
     public interface IProductRepository
     {
-       
-            List<Category.Entities.Product> GetAllProducts();
-            Category.Entities.Product GetProductById(int id);
-            Category.Entities.Product CreateProduct(Category.Entities.Product product);
-            Category.Entities.Product UpdateProduct(Category.Entities.Product product);
-            void DeleteProduct(int id);
-        
+        Task<Product> CreateAsync(Product product);
+        Task DeleteAsync(int id);
+        Task<List<Product>> GetAllAsync();
+        Task<Product> GetByIdAsync(int id);
+        Task<Product> UpdateAsync(Product product);
     }
 }

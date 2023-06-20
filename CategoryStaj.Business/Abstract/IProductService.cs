@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace CategoryStaj.Business.Abstract
 {
-    public  interface IProductService
+    public interface IProductService
     {
-        List<Category.Entities.Product> GetAllProducts();
-        Category.Entities.Product GetProductById(int id);
-        Category.Entities.Product CreateProduct(Category.Entities.Product product);
+        Task<List<Category.Entities.Product>> GetAllProductsAsync();
+        Task<Category.Entities.Product> GetProductByIdAsync(int id);
+        Task<Category.Entities.Product> CreateProductAsync(Category.Entities.Product product);
 
-        Category.Entities.Product UpdateProduct(Category.Entities.Product product);
-        void DeleteProduct(int id);
+        Task<Category.Entities.Product> UpdateProductAsync(Category.Entities.Product product);
+        Task DeleteProductAsync(int id);
     }
 }

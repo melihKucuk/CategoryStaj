@@ -1,47 +1,63 @@
 ﻿using Category.Entities;
 using CategoryStaj.Business.Abstract;
-using CategoryStaj.Business.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Stripe;
+using System.Threading.Tasks;
 
-namespace CategoryStaj.API.Controllres
+namespace CategoryStaj.API.Controllers
 {
-    [Route("api/[product]")]
+    [Route("api/products")]
     [ApiController]
     public class ProductController : ControllerBase
     {
         private IProductService _productService;
 
-        public ProductController()
+        public ProductController(IProductService productService)
         {
-            
-            _productService = new ProductManager();
+            _productService = productService;
         }
+
         [HttpGet]
-        public List<Category.Entities.Product> Get()
+        public async Task<IActionResult> Get()
         {
-            return _productService.GetAllProducts();
+            var products = await _productService.GetAllProductsAsync();
+            return Ok(products);
         }
+
         [HttpGet("{id}")]
-        public Category.Entities.Product Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return _productService. GetProductById(id);
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
+
         [HttpPost]
-        public Category.Entities.Product Post([FromBody] Category.Entities.Product product)
+        public async Task<IActionResult> Post([FromBody] Product product)
         {
-            return _productService.CreateProduct(product);
+            var createdProduct = await _productService.CreateProductAsync(product);
+            return CreatedAtAction(nameof(Get), new { id = createdProduct.ProductId }, createdProduct);
         }
-        [HttpPut]
-        public Category.Entities.Product Put([FromBody] Category.Entities.Product product)
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] Product product)
         {
-            return _productService.UpdateProduct(product);
+            if (id != product.ProductId)
+            {
+                return BadRequest();
+            }
+            var updatedProduct = await _productService.UpdateProductAsync(product);
+            return Ok(updatedProduct);
         }
+
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _productService.DeleteProduct(id);
+            await _productService.DeleteProductAsync(id);
+            return NoContent();
         }
     }
 }
