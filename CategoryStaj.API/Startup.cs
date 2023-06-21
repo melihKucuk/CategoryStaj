@@ -9,9 +9,6 @@ using CategoryStaj.DataAccess;
 using CategoryStaj.DataAccess.Concrete;
 using CategoryStaj.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using CategoryStaj.Business.Abstract;
-using CategoryStaj.Business.Concrete;
-
 
 namespace CategoryStaj.API
 {
@@ -27,12 +24,13 @@ namespace CategoryStaj.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICategoryService, CategoryManager>();
-
             services.AddScoped<IProductService, ProductService>();
+
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+
             services.AddDbContext<CategoryDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
         }

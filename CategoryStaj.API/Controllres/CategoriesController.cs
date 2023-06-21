@@ -1,18 +1,16 @@
-﻿using Category.Entities;
+﻿using System.Collections.Generic;
+using Category.Entities;
 using CategoryStaj.Business.Abstract;
-using CategoryStaj.Business.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Stripe;
 
 namespace CategoryStaj.API.Controllers
 {
     [Route("api/categories")]
-
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private ICategoryService _categoryService;
+        private readonly ICategoryService _categoryService;
 
         public CategoriesController(ICategoryService categoryService)
         {
@@ -20,33 +18,53 @@ namespace CategoryStaj.API.Controllers
         }
 
         [HttpGet]
-        public List<Category.Entities.Category> Get()
+        public ActionResult<List<Category.Entities.Category>> Get()
         {
-            return _categoryService.GetAllCategories();
+            var categories = _categoryService.GetAllCategories();
+            return Ok(categories);
         }
 
         [HttpGet("{id}")]
-        public Category.Entities.Category Get(int id)
+        public ActionResult<Category.Entities.Category> Get(int id)
         {
-            return _categoryService.GetCategoryById(id);
+            var category = _categoryService.GetCategoryById(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return Ok(category);
         }
 
         [HttpPost]
-        public Category.Entities.Category Post([FromBody] Category.Entities.Category category)
+        public ActionResult<Category.Entities.Category> Post([FromBody] Category.Entities.Category category)
         {
-            return _categoryService.CreateCategory(category);
+            var createdCategory = _categoryService.CreateCategory(category);
+            return CreatedAtAction(nameof(Get), new { id = createdCategory.Id }, createdCategory);
         }
 
-        [HttpPut]
-        public Category.Entities.Category Put([FromBody] Category.Entities.Category category)
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] Category.Entities.Category category)
         {
-            return _categoryService.UpdateCategory(category);
+            var existingCategory = _categoryService.GetCategoryById(id);
+            if (existingCategory == null)
+            {
+                return NotFound();
+            }
+            category.Id = id; // Ensure the ID is set correctly
+            _categoryService.UpdateCategory(category);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            var existingCategory = _categoryService.GetCategoryById(id);
+            if (existingCategory == null)
+            {
+                return NotFound();
+            }
             _categoryService.DeleteCategory(id);
+            return NoContent();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace CategoryStaj.DataAccess.Concrete
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<List<Product>> GetAllAsync()  
         {
             return await _context.Products.ToListAsync();
         }
