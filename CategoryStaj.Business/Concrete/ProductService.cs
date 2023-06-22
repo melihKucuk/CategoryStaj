@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Category.Entities;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using CategoryStaj.Business.Abstract;
-using Category.Entities;
 using CategoryStaj.DataAccess;
 
 namespace CategoryStaj.Business.Concrete
@@ -17,24 +16,24 @@ namespace CategoryStaj.Business.Concrete
             _context = context;
         }
 
-        public async Task<List<Product>> GetAllProductsAsync()
+        public async Task<List<Category.Entities.Product>> GetAllProductsAsync()
         {
             return await _context.Products.ToListAsync();
         }
 
-        public async Task<Product> GetProductByIdAsync(int id)
+        public async Task<Category.Entities.Product> GetProductByIdAsync(int id)
         {
             return await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
         }
 
-        public async Task<Product> CreateProductAsync(Product product)
+        public async Task<Category.Entities.Product> CreateProductAsync(Category.Entities.Product product)
         {
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
             return product;
         }
 
-        public async Task<Product> UpdateProductAsync(Product product)
+        public async Task<Category.Entities.Product> UpdateProductAsync(Category.Entities.Product product)
         {
             _context.Entry(product).State = EntityState.Modified;
             await _context.SaveChangesAsync();

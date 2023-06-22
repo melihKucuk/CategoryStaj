@@ -23,14 +23,14 @@ namespace CategoryStaj.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ICategoryService, CategoryManager>();
+            // Dependency Injection için gerekli bağımlılıkların eklendiği yer
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
-
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddDbContext<CategoryDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("Server=DESKTOP-NC4RCNO\\SQLEXPRESS;Database=CategoryDb;Trusted_Connection=True;TrustServerCertificate=true;")));
 
             services.AddControllers();
         }

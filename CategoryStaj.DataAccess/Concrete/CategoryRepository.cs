@@ -1,6 +1,9 @@
 ﻿using Category.Entities;
 using CategoryStaj.DataAccess.Abstract;
 using CategoryStaj.DataAccess.Abstract.Generic;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CategoryStaj.DataAccess.Concrete
 {
@@ -11,37 +14,6 @@ namespace CategoryStaj.DataAccess.Concrete
         public CategoryRepository(CategoryDbContext categoryDbContext) : base(categoryDbContext)
         {
             _context = categoryDbContext;
-        }
-
-        public List<Product> GetAllProducts()
-        {
-            return _context.Products.ToList();
-        }
-
-        public Product GetProductById(int id)
-        {
-            return _context.Products.Find(id);
-        }
-
-        public Product CreateProduct(Product product)
-        {
-            _context.Products.Add(product);
-            _context.SaveChanges();
-            return product;
-        }
-
-        public Product UpdateProduct(Product product)
-        {
-            _context.Products.Update(product);
-            _context.SaveChanges();
-            return product;
-        }
-
-        public void DeleteProduct(int id)
-        {
-            var deletedProduct = GetProductById(id);
-            _context.Products.Remove(deletedProduct);
-            _context.SaveChanges();
         }
 
         public Category.Entities.Category CreateCategory(Category.Entities.Category category)
@@ -73,6 +45,37 @@ namespace CategoryStaj.DataAccess.Concrete
             _context.Categories.Update(category);
             _context.SaveChanges();
             return category;
+        }
+
+        public async Task<List<Category.Entities.Category>> GetAllCategoriesAsync()
+        {
+            return await _context.Categories.ToListAsync();
+        }
+
+        public async Task<Category.Entities.Category> GetCategoryByIdAsync(int id)
+        {
+            return await _context.Categories.FindAsync(id);
+        }
+
+        public async Task<Category.Entities.Category> CreateCategoryAsync(Category.Entities.Category category)
+        {
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+            return category;
+        }
+
+        public async Task<Category.Entities.Category> UpdateCategoryAsync(Category.Entities.Category category)
+        {
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
+            return category;
+        }
+
+        public async Task DeleteCategoryAsync(int id)
+        {
+            var deletedCategory = await GetCategoryByIdAsync(id);
+            _context.Categories.Remove(deletedCategory);
+            await _context.SaveChangesAsync();
         }
     }
 }

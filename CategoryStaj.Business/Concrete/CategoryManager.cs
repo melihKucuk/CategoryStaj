@@ -20,14 +20,29 @@ namespace CategoryStaj.Business.Concrete
             return _categoryRepository.CreateCategory(category);
         }
 
+        public Task<Category.Entities.Category> CreateCategoryAsync(Category.Entities.Category category)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteCategory(int id)
         {
             _categoryRepository.DeleteCategory(id);
         }
 
+        public Task DeleteCategoryAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Category.Entities.Category> GetAllCategories()
         {
             return _categoryRepository.GetAllCategories();
+        }
+
+        public Task<List<Category.Entities.Category>> GetAllCategoriesAsync()
+        {
+            throw new NotImplementedException();
         }
 
         public Category.Entities.Category GetCategoryById(int id)
@@ -39,9 +54,19 @@ namespace CategoryStaj.Business.Concrete
             throw new Exception("id 1'den küçük olamaz");
         }
 
+        public Task<Category.Entities.Category> GetCategoryByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Category.Entities.Category UpdateCategory(Category.Entities.Category category)
         {
             return _categoryRepository.UpdateCategory(category);
+        }
+
+        public Task<Category.Entities.Category> UpdateCategoryAsync(Category.Entities.Category category)
+        {
+            throw new NotImplementedException();
         }
     }
 }

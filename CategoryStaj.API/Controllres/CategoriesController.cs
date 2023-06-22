@@ -20,14 +20,14 @@ namespace CategoryStaj.API.Controllers
         [HttpGet]
         public ActionResult<List<Category.Entities.Category>> Get()
         {
-            var categories = _categoryService.GetAllCategories();
+            var categories = _categoryService.GetAllCategoriesAsync();
             return Ok(categories);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Category.Entities.Category> Get(int id)
         {
-            var category = _categoryService.GetCategoryById(id);
+            var category = _categoryService.GetCategoryByIdAsync(id);
             if (category == null)
             {
                 return NotFound();
@@ -38,32 +38,32 @@ namespace CategoryStaj.API.Controllers
         [HttpPost]
         public ActionResult<Category.Entities.Category> Post([FromBody] Category.Entities.Category category)
         {
-            var createdCategory = _categoryService.CreateCategory(category);
+            var createdCategory = _categoryService.CreateCategoryAsync(category);
             return CreatedAtAction(nameof(Get), new { id = createdCategory.Id }, createdCategory);
         }
 
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Category.Entities.Category category)
         {
-            var existingCategory = _categoryService.GetCategoryById(id);
+            var existingCategory = _categoryService.GetCategoryByIdAsync(id);
             if (existingCategory == null)
             {
                 return NotFound();
             }
             category.Id = id; // Ensure the ID is set correctly
-            _categoryService.UpdateCategory(category);
+            _categoryService.UpdateCategoryAsync(category);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var existingCategory = _categoryService.GetCategoryById(id);
+            var existingCategory = _categoryService.GetCategoryByIdAsync(id);
             if (existingCategory == null)
             {
                 return NotFound();
             }
-            _categoryService.DeleteCategory(id);
+            _categoryService.DeleteCategoryAsync(id);
             return NoContent();
         }
     }
