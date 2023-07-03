@@ -15,13 +15,17 @@ namespace CategoryStaj.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICategoryService, CategoryManager>();
+            builder.Services.AddScoped<IProductService, ProductManager>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             builder.Services.AddDbContext<CategoryDbContext>(options =>
-                options.UseSqlServer("Server=DESKTOP-NC4RCNO\\SQLEXPRESS; Database=CategoryDb; Trusted_Connection=True; TrustServerCertificate=true;"));
+            {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString);
+            });
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

@@ -16,7 +16,7 @@ namespace CategoryStaj.DataAccess
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-NC4RCNO\\SQLEXPRESS; Database=CategoryDb; Trusted_Connection=True; TrustServerCertificate=true;");
+                optionsBuilder.UseSqlServer("name=DefaultConnection");
             }
         }
 
