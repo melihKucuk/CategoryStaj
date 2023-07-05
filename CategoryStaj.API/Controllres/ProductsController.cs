@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Category.Entities.Pagination;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace CategoryStaj.API.Controllers
 {
@@ -18,12 +21,21 @@ namespace CategoryStaj.API.Controllers
             _productService = productService;
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1)
         {
             var products = await _productService.GetAllProductsAsync();
-            return Ok(products);
+
+            var pagedProducts = new PaginationResult<Product>(
+                products, products.Count, pageNumber, pageSize);
+
+            return Ok(pagedProducts);
         }
+
+
+
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)

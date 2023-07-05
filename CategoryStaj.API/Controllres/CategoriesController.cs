@@ -2,6 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Category.Entities.Pagination;
+
+
+
+
 
 namespace CategoryStaj.API.Controllers
 {
@@ -37,6 +43,9 @@ namespace CategoryStaj.API.Controllers
         public async Task<ActionResult<Category.Entities.Category>> GetCategoryByIdAsync(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
+
+
+            
             if (category == null)
             {
                 return NotFound();
@@ -46,11 +55,17 @@ namespace CategoryStaj.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Category.Entities.Category>>> GetAllCategoriesAsync()
+        public async Task<ActionResult<List<Category.Entities.Category>>> GetAllCategoriesAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
-            return Ok(categories);
+
+            var pagedCategories = categories
+                .AsQueryable()
+                .ToPagedListAsync(pageNumber, pageSize);
+
+            return Ok(pagedCategories);
         }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult<Category.Entities.Category>> UpdateCategoryAsync(int id, [FromBody] Category.Entities.Category category)
