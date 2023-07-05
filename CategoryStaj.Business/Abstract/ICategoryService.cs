@@ -12,4 +12,5 @@ namespace CategoryStaj.Business.Abstract
         Task<Category.Entities.Category> UpdateCategoryAsync(Category.Entities.Category category);
         Task DeleteCategoryAsync(int id);
     }
+
 }

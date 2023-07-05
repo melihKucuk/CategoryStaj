@@ -1,13 +1,8 @@
-﻿using CategoryStaj.Business.Abstract;
+﻿using CategoryStaj.Business.ViewModels;
+using CategoryStaj.Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Category.Entities.Pagination;
-
-
-
-
 
 namespace CategoryStaj.API.Controllers
 {
@@ -22,30 +17,20 @@ namespace CategoryStaj.API.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Category.Entities.Category>> CreateCategoryAsync([FromBody] Category.Entities.Category category)
+        [HttpGet]
+        public async Task<ActionResult<List<CategoryViewModel>>> GetAllCategoriesAsync()
         {
-            if (category == null)
-            {
-                return BadRequest();
-            }
-
-            var createdCategory = await _categoryService.CreateCategoryAsync(category);
-            if (createdCategory == null)
-            {
-                return Conflict();
-            }
-
-            return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = createdCategory.Id }, createdCategory);
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            return Ok(categories);
         }
 
+
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category.Entities.Category>> GetCategoryByIdAsync(int id)
+        public async Task<ActionResult<CategoryViewModel>> GetCategoryByIdAsync(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
 
-
-            
             if (category == null)
             {
                 return NotFound();
@@ -54,23 +39,11 @@ namespace CategoryStaj.API.Controllers
             return Ok(category);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Category.Entities.Category>>> GetAllCategoriesAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
-        {
-            var categories = await _categoryService.GetAllCategoriesAsync();
-
-            var pagedCategories = categories
-                .AsQueryable()
-                .ToPagedListAsync(pageNumber, pageSize);
-
-            return Ok(pagedCategories);
-        }
-
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Category.Entities.Category>> UpdateCategoryAsync(int id, [FromBody] Category.Entities.Category category)
+        public async Task<ActionResult<CategoryViewModel>> UpdateCategoryAsync(int id, [FromBody] CategoryViewModel categoryViewModel)
         {
-            if (category == null || id != category.Id)
+            if (categoryViewModel == null || id != categoryViewModel.Id)
             {
                 return BadRequest();
             }
@@ -81,8 +54,25 @@ namespace CategoryStaj.API.Controllers
                 return NotFound();
             }
 
-            var updatedCategory = await _categoryService.UpdateCategoryAsync(category);
+            var updatedCategory = await _categoryService.UpdateCategoryAsync(categoryViewModel);
             return Ok(updatedCategory);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<CategoryViewModel>> CreateCategoryAsync([FromBody] CategoryViewModel categoryViewModel)
+        {
+            if (categoryViewModel == null)
+            {
+                return BadRequest();
+            }
+
+            var createdCategory = await _categoryService.CreateCategoryAsync(categoryViewModel);
+            if (createdCategory == null)
+            {
+                return Conflict();
+            }
+
+            return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = createdCategory.Id }, createdCategory);
         }
 
         [HttpDelete("{id}")]

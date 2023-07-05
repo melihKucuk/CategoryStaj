@@ -18,8 +18,11 @@ namespace CategoryStaj.Business.Concrete
 
         public async Task<List<Category.Entities.Category>> GetAllCategoriesAsync()
         {
-            return await _categoryRepository.GetAllCategoriesAsync();
+            var categories = await _categoryRepository.GetAllCategoriesAsync();
+            return categories.ToList();
         }
+
+
 
         public async Task<Category.Entities.Category> GetCategoryByIdAsync(int id)
         {
