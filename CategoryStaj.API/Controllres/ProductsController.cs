@@ -16,10 +16,13 @@ namespace CategoryStaj.API.Controllers
     public class ProductController : ControllerBase
     {
         private IProductService _productService;
+        private readonly ProductViewModelValidator _productValidator;
+
 
         public ProductController(IProductService productService)
         {
             _productService = productService;
+            _productValidator = new ProductViewModelValidator();
         }
 
 
@@ -70,22 +73,28 @@ namespace CategoryStaj.API.Controllers
                 Name = product.Name,
                 Price = product.Price,
                 CategoryId = product.CategoryId,
-                Category = new CategoryViewModel
-                {
-                    Id = product.CategoryId,
-                    Name = product.Category.Name
-                }
+                Category = product.Category != null ? new CategoryViewModel
+            {
+                Id = product.Category.Id,
+                Name = product.Category.Name
+            }: null
             };
 
             return Ok(productViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ProductViewModel productViewModel)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductViewModel productViewModel)
         {
             if (productViewModel == null)
             {
-                return BadRequest();
+                productViewModel = new ProductViewModel();
+            }
+
+            var validationResult = await _productValidator.ValidateAsync(productViewModel);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
             }
 
             var product = new Product
@@ -98,6 +107,7 @@ namespace CategoryStaj.API.Controllers
             var createdProduct = await _productService.CreateProductAsync(product);
             return CreatedAtAction(nameof(Get), new { id = createdProduct.ProductId }, createdProduct);
         }
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ProductViewModel productViewModel)
@@ -122,7 +132,7 @@ namespace CategoryStaj.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id) 
         {
             var existingProduct = await _productService.GetProductByIdAsync(id);
             if (existingProduct == null)

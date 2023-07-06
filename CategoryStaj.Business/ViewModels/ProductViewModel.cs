@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Category.Entities;
+using System.Text.Json.Serialization;
+
 
 namespace CategoryStaj.Business.ViewModels
 {
@@ -17,6 +19,7 @@ namespace CategoryStaj.Business.ViewModels
 
         public int CategoryId { get; set; }
 
+        [JsonIgnore]
         public CategoryViewModel Category { get; set; }
     }
 }

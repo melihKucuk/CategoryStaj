@@ -3,6 +3,7 @@ using CategoryStaj.Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CategoryStaj.Business.ViewModels.Validations;
 
 namespace CategoryStaj.API.Controllers
 {
@@ -11,10 +12,13 @@ namespace CategoryStaj.API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
+        private readonly CategoryViewModelValidator _categoryValidator;
+
 
         public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
+            _categoryValidator = new CategoryViewModelValidator();
         }
 
         [HttpGet]
@@ -61,9 +65,10 @@ namespace CategoryStaj.API.Controllers
         [HttpPost]
         public async Task<ActionResult<CategoryViewModel>> CreateCategoryAsync([FromBody] CategoryViewModel categoryViewModel)
         {
-            if (categoryViewModel == null)
+            var validationResult = await _categoryValidator.ValidateAsync(categoryViewModel);
+            if (!validationResult.IsValid)
             {
-                return BadRequest();
+                return BadRequest(validationResult.Errors);
             }
 
             var createdCategory = await _categoryService.CreateCategoryAsync(categoryViewModel);
