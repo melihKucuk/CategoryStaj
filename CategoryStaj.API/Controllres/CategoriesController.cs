@@ -3,7 +3,7 @@ using CategoryStaj.Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CategoryStaj.Business.ViewModels.Validations;
+using CategoryStaj.Business.ViewModels;
 
 namespace CategoryStaj.API.Controllers
 {
@@ -12,17 +12,17 @@ namespace CategoryStaj.API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly CategoryViewModelValidator _categoryValidator;
+        private readonly CategoryCreateViewModelValidator _categoryValidator;
 
 
         public CategoriesController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-            _categoryValidator = new CategoryViewModelValidator();
+            _categoryValidator = new CategoryCreateViewModelValidator();
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CategoryViewModel>>> GetAllCategoriesAsync()
+        public async Task<ActionResult<List<CategoryListViewModel>>> GetAllCategoriesAsync()
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
             return Ok(categories);
@@ -31,7 +31,7 @@ namespace CategoryStaj.API.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryViewModel>> GetCategoryByIdAsync(int id)
+        public async Task<ActionResult<CategoryListViewModel>> GetCategoryByIdAsync(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
 
@@ -45,12 +45,9 @@ namespace CategoryStaj.API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<CategoryViewModel>> UpdateCategoryAsync(int id, [FromBody] CategoryViewModel categoryViewModel)
+        public async Task<ActionResult<CategoryListViewModel>> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateViewModel categoryViewModel)
         {
-            if (categoryViewModel == null || id != categoryViewModel.Id)
-            {
-                return BadRequest();
-            }
+            
 
             var existingCategory = await _categoryService.GetCategoryByIdAsync(id);
             if (existingCategory == null)
@@ -58,20 +55,40 @@ namespace CategoryStaj.API.Controllers
                 return NotFound();
             }
 
-            var updatedCategory = await _categoryService.UpdateCategoryAsync(categoryViewModel);
+            existingCategory.Name = categoryViewModel.Name;
+
+            var updatedCategory = await _categoryService.UpdateCategoryAsync(existingCategory);
             return Ok(updatedCategory);
         }
 
+
         [HttpPost]
-        public async Task<ActionResult<CategoryViewModel>> CreateCategoryAsync([FromBody] CategoryViewModel categoryViewModel)
+        public async Task<IActionResult> CreateCategoryAsync([FromBody] CategoryCreateViewModel categoryCreateViewModel)
         {
-            var validationResult = await _categoryValidator.ValidateAsync(categoryViewModel);
-            if (!validationResult.IsValid)
+            if (categoryCreateViewModel == null)
             {
-                return BadRequest(validationResult.Errors);
+                return BadRequest("Kategori bilgileri boş olamaz.");
             }
 
-            var createdCategory = await _categoryService.CreateCategoryAsync(categoryViewModel);
+            var validationResult = await _categoryValidator.ValidateAsync(categoryCreateViewModel);
+            if (!validationResult.IsValid)
+            {
+                var validationErrors = validationResult.Errors.Select(error => new
+                {
+                    PropertyName = error.PropertyName,
+                    ErrorMessage = error.ErrorMessage,
+                    AttemptedValue = error.AttemptedValue
+                }).ToList();
+
+                return BadRequest(validationErrors);
+            }
+
+            var category = new Category.Entities.Category
+            {
+                Name = categoryCreateViewModel.Name
+            };
+
+            var createdCategory = await _categoryService.CreateCategoryAsync(category);
             if (createdCategory == null)
             {
                 return Conflict();
@@ -79,6 +96,11 @@ namespace CategoryStaj.API.Controllers
 
             return CreatedAtAction(nameof(GetCategoryByIdAsync), new { id = createdCategory.Id }, createdCategory);
         }
+
+
+
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategoryAsync(int id)

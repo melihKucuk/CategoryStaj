@@ -6,6 +6,10 @@ using CategoryStaj.DataAccess.Abstract;
 using CategoryStaj.DataAccess.Concrete;
 using Microsoft.EntityFrameworkCore;
 using CategoryStaj.DataAccess;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
+using AutoMapper;
+using CategoryStaj.Business.Mappings;
 
 namespace CategoryStaj.API
 {
@@ -26,6 +30,9 @@ namespace CategoryStaj.API
                 options.UseSqlServer(connectionString);
             });
 
+            builder.Services.AddMemoryCache(); // Bellek önbelleðini ekleyin
+
+            builder.Services.AddAutoMapper(typeof(MappingProfile)); // AutoMapper
 
             builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
             {

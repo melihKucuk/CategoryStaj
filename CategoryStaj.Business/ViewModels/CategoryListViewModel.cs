@@ -7,12 +7,12 @@ using Category.Entities;
 
 namespace CategoryStaj.Business.ViewModels
 {
-    public class CategoryViewModel : Category.Entities.Category
+    public class CategoryListViewModel
     {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-        public List<ProductViewModel> Products { get; set; }
+        public List<ProductListViewModel> Products { get; set; }
     }
 }

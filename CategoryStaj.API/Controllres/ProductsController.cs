@@ -16,13 +16,13 @@ namespace CategoryStaj.API.Controllers
     public class ProductController : ControllerBase
     {
         private IProductService _productService;
-        private readonly ProductViewModelValidator _productValidator;
+        private readonly ProductCreateViewModelValidator _productValidator;
 
 
         public ProductController(IProductService productService)
         {
             _productService = productService;
-            _productValidator = new ProductViewModelValidator();
+            _productValidator = new ProductCreateViewModelValidator();
         }
 
 
@@ -31,27 +31,27 @@ namespace CategoryStaj.API.Controllers
         {
             var products = await _productService.GetAllProductsAsync();
 
-            var productViewModels = new List<ProductViewModel>();
+            var productViewModels = new List<ProductListViewModel>();
             foreach (var product in products)
             {
-                var productViewModel = new ProductViewModel
+                var productViewModel = new ProductListViewModel
                 {
                     ProductId = product.ProductId,
                     Name = product.Name,
                     Price = product.Price,
                     CategoryId = product.CategoryId,
                     Category = product.Category != null
-            ? new CategoryViewModel
-            {
-                Id = product.Category.Id,
-                Name = product.Category.Name
-            }
-            : null
+                        ? new CategoryListViewModel
+                        {
+                            Id = product.Category.Id,
+                            Name = product.Category.Name
+                        }
+                        : null
                 };
                 productViewModels.Add(productViewModel);
             }
 
-            var pagedProducts = new PaginationResult<ProductViewModel>(
+            var pagedProducts = new PaginationResult<ProductListViewModel>(
                 productViewModels, productViewModels.Count, pageNumber, pageSize);
 
             return Ok(pagedProducts);
@@ -67,31 +67,31 @@ namespace CategoryStaj.API.Controllers
                 return NotFound();
             }
 
-            var productViewModel = new ProductViewModel
+            var productViewModel = new ProductListViewModel
             {
                 ProductId = product.ProductId,
                 Name = product.Name,
                 Price = product.Price,
                 CategoryId = product.CategoryId,
-                Category = product.Category != null ? new CategoryViewModel
-            {
-                Id = product.Category.Id,
-                Name = product.Category.Name
-            }: null
+                Category = product.Category != null ? new CategoryListViewModel
+                {
+                    Id = product.Category.Id,
+                    Name = product.Category.Name
+                } : null
             };
 
             return Ok(productViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductViewModel productViewModel)
+        public async Task<IActionResult> CreateProduct([FromBody] ProductCreateViewModel productCreateViewModel)
         {
-            if (productViewModel == null)
+            if (productCreateViewModel == null)
             {
-                productViewModel = new ProductViewModel();
+                productCreateViewModel = new ProductCreateViewModel();
             }
 
-            var validationResult = await _productValidator.ValidateAsync(productViewModel);
+            var validationResult = await _productValidator.ValidateAsync(productCreateViewModel);
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors);
@@ -99,9 +99,9 @@ namespace CategoryStaj.API.Controllers
 
             var product = new Product
             {
-                Name = productViewModel.Name,
-                Price = productViewModel.Price,
-                CategoryId = productViewModel.CategoryId
+                Name = productCreateViewModel.Name,
+                Price = productCreateViewModel.Price,
+                CategoryId = productCreateViewModel.CategoryId
             };
 
             var createdProduct = await _productService.CreateProductAsync(product);
@@ -109,10 +109,12 @@ namespace CategoryStaj.API.Controllers
         }
 
 
+
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ProductViewModel productViewModel)
+        public async Task<IActionResult> Put(int id, [FromBody] ProductUpdateViewModel productUpdateViewModel)
         {
-            if (productViewModel == null || id != productViewModel.ProductId)
+            if (productUpdateViewModel == null || id != productUpdateViewModel.ProductId)
             {
                 return BadRequest();
             }
@@ -123,16 +125,16 @@ namespace CategoryStaj.API.Controllers
                 return NotFound();
             }
 
-            existingProduct.Name = productViewModel.Name;
-            existingProduct.Price = productViewModel.Price;
-            existingProduct.CategoryId = productViewModel.CategoryId;
+            existingProduct.Name = productUpdateViewModel.Name;
+            existingProduct.Price = productUpdateViewModel.Price;
+            existingProduct.CategoryId = productUpdateViewModel.CategoryId;
 
             var updatedProduct = await _productService.UpdateProductAsync(existingProduct);
             return Ok(updatedProduct);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id) 
+        public async Task<IActionResult> Delete(int id)
         {
             var existingProduct = await _productService.GetProductByIdAsync(id);
             if (existingProduct == null)
