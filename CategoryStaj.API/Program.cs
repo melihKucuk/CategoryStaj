@@ -10,6 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using AutoMapper;
 using CategoryStaj.Business.Mappings;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using CategoryStaj.API.Log;
 
 namespace CategoryStaj.API
 {
@@ -37,7 +41,24 @@ namespace CategoryStaj.API
             builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var responseObj = new
+                    {
+                        Path = context.HttpContext.Request.Path.ToString(),
+                        Method = context.HttpContext.Request.Method,
+                        Controller = (context.ActionDescriptor as ControllerActionDescriptor)?.ControllerName,
+                        Action = (context.ActionDescriptor as ControllerActionDescriptor)?.ActionName,
+                        Errors = context.ModelState.Keys.Select(k => new
+                        {
+                            Field = k,
+                            Messages = context.ModelState[k]?.Errors.Select(e => e.ErrorMessage)
+                        })
+                    };
+                    return new BadRequestObjectResult(responseObj);
+                };
             });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -50,6 +71,12 @@ namespace CategoryStaj.API
             }
 
             app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseAuthentication(); 
+            app.UseAuthorization();
+            app.UseLogging("D:\\VSRepos\\CategoryStaj\\CategoryStaj.API\\Log\\log.txt");
+
+
 
             app.UseAuthorization();
 

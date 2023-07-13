@@ -47,7 +47,10 @@ namespace CategoryStaj.API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<CategoryListViewModel>> UpdateCategoryAsync(int id, [FromBody] CategoryUpdateViewModel categoryViewModel)
         {
-            
+            //if (categoryViewModel == null || id != categoryViewModel.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             var existingCategory = await _categoryService.GetCategoryByIdAsync(id);
             if (existingCategory == null)
